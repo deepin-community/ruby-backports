@@ -1,0 +1,133 @@
+ruby-backports (3.21.0-2) unstable; urgency=medium
+
+  * Team upload.
+  * d/patches/improve-async-testing.patch: Add patch.
+    - Add patch by upstream to fix flaky test_filter(FilteredQueueTest) test.
+  * d/patches/series: Add new patch.
+
+ -- Daniel Leidert <dleidert@debian.org>  Mon, 08 Nov 2021 16:30:58 +0100
+
+ruby-backports (3.21.0-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream release (closes: #996132).
+  * d/backports.gemspec: Remove file.
+  * d/control (Standards-Version): Bump to 4.6.0.
+    (Build-Depends): Add rubocop and ruby-rspec.
+    (Depends): Remove interpreters and use ${ruby:Depends}.
+  * d/copyright: Add Upstream-Contact field.
+    (Copyright): Add team.
+  * d/ruby-backports.docs: Fix filename.
+  * d/rules: Drop DH_RUBY_GEMSPEC and DH_RUBY_IGNORE_TESTS. Use gem
+    installation layout. Drop overrides for dh_auto_configure and dh_clean.
+    (override_dh_installchangelogs): Fix filename.
+  * d/watch: Fix download URL.
+  * d/patches/remove-git-in-gemspec.patch: Drop unnecessary patch.
+  * d/patches/use-system-library-paths-when-running-under-autopkgtest: Refresh.
+    - Use Gem::Specification to determine the path in autopkgtest environment.
+  * d/patches/series: Adjust.
+  * d/upstream/metadata: Add Archive and Chagenglog fields.
+
+ -- Daniel Leidert <dleidert@debian.org>  Fri, 05 Nov 2021 19:49:47 +0100
+
+ruby-backports (3.16.0-1) unstable; urgency=medium
+
+  * New upstream version 3.16.0
+  * Add salsa-ci.yml
+  * Drop d/compat file
+  * Fix package wrt cme
+  * Drop unnecessary patch; merged upstream
+  * Refresh patch for current version release
+  * Add patch to drop git in gemspec
+
+ -- Utkarsh Gupta <utkarsh@debian.org>  Fri, 07 Feb 2020 12:19:04 -0500
+
+ruby-backports (3.11.1-2) unstable; urgency=medium
+
+  * Team upload.
+  * Add patch to skip activesupport test as advised by upstream. Closes: #918600
+
+ -- Lucas Kanashiro <lucas.kanashiro@collabora.com>  Mon, 25 Feb 2019 08:59:10 -0300
+
+ruby-backports (3.11.1-1) unstable; urgency=medium
+
+  * Team upload
+  * New upstream version 3.11.1
+    - fixes warnings under ruby2.5
+  * debian/rules: ignore test failures under ruby2.3
+
+ -- Antonio Terceiro <terceiro@debian.org>  Thu, 01 Mar 2018 10:29:16 -0300
+
+ruby-backports (3.6.8-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Cédric Boutillier ]
+  * Remove version in the gem2deb build-dependency
+  * Use https:// in Vcs-* fields
+  * Bump Standards-Version to 3.9.7 (no changes needed)
+  * Run wrap-and-sort on packaging files
+
+  [ Christian Hofstaedtler ]
+  * New upstream version, drop upstream applied patch.
+
+ -- Christian Hofstaedtler <zeha@debian.org>  Thu, 05 May 2016 22:46:47 +0000
+
+ruby-backports (3.6.6-1) unstable; urgency=low
+
+  * New upstream version.
+  * Refresh static gemspec.
+  * Add a patch to make the test suite work under autopkgtest.
+  * Switch to debhelper compat level 9.
+  * Update Vcs-Browser.
+  * Bump Standards-Version, no changes required.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Wed, 09 Sep 2015 15:25:24 +0200
+
+ruby-backports (3.6.1-1) unstable; urgency=low
+
+  * Team upload
+
+  [ David Suárez ]
+  * New upstream version (Fixes IO::open)
+
+ -- David Suárez <david.sephirot@gmail.com>  Sat, 27 Sep 2014 14:36:32 +0200
+
+ruby-backports (3.6.0-3) unstable; urgency=low
+
+  * Revert the previous change and instead add the missing Build-Depends
+    on ruby-test-unit. Thanks Cédric Boutillier for the proper fix.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Tue, 02 Sep 2014 19:37:14 +0000
+
+ruby-backports (3.6.0-2) unstable; urgency=medium
+
+  * Stop testing Rails support as it pulls incompatible dependencies.
+    (Closes: #759897)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Mon, 01 Sep 2014 14:45:44 +0000
+
+ruby-backports (3.6.0-1) unstable; urgency=low
+
+  * New upstream version.
+  * Update debian/watch file, thanks to Bart Martens.
+  * Create a static gemspec for proper gem integration.
+
+ -- Jérémy Bobbio <lunar@debian.org>  Sun, 04 May 2014 12:49:40 +0200
+
+ruby-backports (3.3.5-1) unstable; urgency=low
+
+  * Team upload
+
+  [ David Suárez ]
+  * Fix collision with hash function (Closes: #720249)
+  * Bump standards version to 3.9.5; no changes needed
+  * Add build-depend on ruby-activesupport to run specs
+
+ -- David Suárez <david.sephirot@gmail.com>  Wed, 04 Dec 2013 20:31:42 +0100
+
+ruby-backports (3.1.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #703075)
+
+ -- Jérémy Bobbio <lunar@debian.org>  Mon, 18 Mar 2013 16:44:22 +0100

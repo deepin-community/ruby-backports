@@ -1,0 +1,49 @@
+From: =?utf-8?q?Marc-Andr=C3=A9_Lafortune?= <github@marc-andre.ca>
+Date: Sun, 7 Nov 2021 17:17:20 -0500
+Subject: Improve async testing
+
+This (hopefully) fixes a flaky test:
+https://salsa.debian.org/ruby-team/ruby-backports/-/jobs/2151627
+
+Reviewed-By: Daniel Leidert <dleidert@debian.org>
+Origin: https://github.com/marcandre/backports/commit/e52fc7954ff59ebdb7c18363a201fe43edc16225.patch
+Bug: https://github.com/marcandre/backports/issues/168
+---
+ test/filtered_queue_test.rb | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/test/filtered_queue_test.rb b/test/filtered_queue_test.rb
+index 58f0b0e..d597e08 100644
+--- a/test/filtered_queue_test.rb
++++ b/test/filtered_queue_test.rb
+@@ -50,6 +50,14 @@ class FilteredQueueTest < Test::Unit::TestCase
+     assert_equal(:done, @q.pop(timeout: 0.2))
+   end
+ 
++  def assert_eventually_equal(value)
++    100.times do
++      return true if value == yield
++      sleep(0.01)
++    end
++    assert value == yield
++  end
++
+   def test_filter
+     # send 0 to 7 to queue, with filters for 0 to 2.
+     # start queue with `before` elements already present
+@@ -64,12 +72,10 @@ class FilteredQueueTest < Test::Unit::TestCase
+       end
+       Thread.pass
+       other.each { |i| @q << i }
+-      sleep(0.1)
+-      assert_equal 3, @q.num_waiting
+-      assert_equal 3 * 4, calls
++      assert_eventually_equal(3) {@q.num_waiting}
++      assert_eventually_equal(3 * 4) {calls}
+       @q << :extra
+-      sleep(0.1)
+-      assert_equal 3 * 5, calls
++      assert_eventually_equal(3 * 5) {calls}
+       @q << 0 << 1 << 2 << 3
+       t.each(&:join)
+       assert_equal 0, @q.num_waiting

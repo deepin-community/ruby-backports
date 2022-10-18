@@ -1,0 +1,99 @@
+From: Lunar <lunar@debian.org>
+Date: Fri, 7 Feb 2020 08:45:50 -0300
+Subject: Use system library paths when running under autopkgtest
+
+Reviewed-By: Daniel Leidert <dleidert@debian.org>
+---
+ test/_backport_guards_test.rb | 16 ++++++++++++----
+ test/ractor_extra_test.rb     |  4 ++--
+ test/ractor_test.rb           |  4 ++--
+ 3 files changed, 16 insertions(+), 8 deletions(-)
+
+diff --git a/test/_backport_guards_test.rb b/test/_backport_guards_test.rb
+index b59bd57..4fab088 100644
+--- a/test/_backport_guards_test.rb
++++ b/test/_backport_guards_test.rb
+@@ -87,6 +87,14 @@ if RUBY_VERSION < '2.0'
+       delta unless delta.empty?
+     end
+ 
++    def lib_path(path)
++      unless ENV['AUTOPKGTEST_TMP'].nil? # running under autopkgtest
++        File.expand_path(File.join(Gem::Specification.find_by_name('backports').lib_dirs_glob, path), __FILE__)
++      else
++        File.expand_path("../../lib/#{path}", __FILE__)
++      end
++    end
++
+     # Order super important!
+     def test__1_abbrev_can_be_required_before_backports
+       assert require('abbrev')
+@@ -99,7 +107,7 @@ if RUBY_VERSION < '2.0'
+       latest = "2.4.0"
+       if RUBY_VERSION > '1.8.6'
+         main_version = [RUBY_VERSION, latest].min
+-        unless File.exist?(File.expand_path("../../lib/backports/#{main_version}.rb", __FILE__))
++        unless File.exist?(lib_path("backports/#{main_version}.rb"))
+           main_version = main_version.sub(/\.\d+$/, '.0')
+         end
+         require 'backports/tools/deprecation'
+@@ -117,7 +125,7 @@ if RUBY_VERSION < '2.0'
+ 
+     if RUBY_VERSION < '1.9.2' # this backport wouldn't be necessary otherwise
+       def test_setlib_load_correctly_after_requiring_backports
+-        path = File.expand_path("../../lib/backports/1.9.2/stdlib/matrix.rb", __FILE__)
++        path = lib_path("backports/1.9.2/stdlib/matrix.rb")
+         assert_equal false,  $LOADED_FEATURES.include?(path)
+         assert_equal true,  require('matrix')
+         assert_equal true,  $bogus.include?("matrix")
+@@ -128,7 +136,7 @@ if RUBY_VERSION < '2.0'
+ 
+     def test_setlib_load_correctly_before_requiring_backports_test
+       assert_equal true,  $bogus.include?("abbrev")
+-      path = File.expand_path("../../lib/backports/2.0.0/stdlib/abbrev.rb", __FILE__)
++      path = lib_path("backports/2.0.0/stdlib/abbrev.rb")
+       assert_equal true,  $LOADED_FEATURES.include?(path)
+       assert_equal false, require('abbrev')
+     end
+@@ -139,7 +147,7 @@ if RUBY_VERSION < '2.0'
+     end
+ 
+     def test_load_correctly_new_libraries_test
+-      path = File.expand_path("../../lib/backports/2.0.0/stdlib/fake_stdlib_lib.rb", __FILE__)
++      path = lib_path("backports/2.0.0/stdlib/fake_stdlib_lib.rb")
+       assert_equal false, $LOADED_FEATURES.include?(path)
+       assert_equal true,  require('fake_stdlib_lib')
+       assert_equal true,  $LOADED_FEATURES.include?(path)
+diff --git a/test/ractor_extra_test.rb b/test/ractor_extra_test.rb
+index 701d6a1..3bcc0d5 100644
+--- a/test/ractor_extra_test.rb
++++ b/test/ractor_extra_test.rb
+@@ -1,5 +1,5 @@
+ require './test/test_helper'
+-require './lib/backports/3.0.0/ractor.rb'
++require 'backports/3.0.0/ractor.rb'
+ 
+ def thread_eval
+   r = nil
+@@ -105,7 +105,7 @@ class ExtraRactorTest < Test::Unit::TestCase
+   end
+ 
+   def test_namespaced_include
+-    cmd = "ruby -r #{__dir__}/../lib/backports/ractor/ractor -e 'p [defined?(Ractor), Backports::Ractor.new { 42 }.take]'"
++    cmd = "#{RbConfig.ruby} -rbackports/ractor/ractor -e 'p [defined?(Ractor), Backports::Ractor.new { 42 }.take]'"
+     puts cmd
+     r = `#{cmd}`.chomp
+     assert_equal '[nil, 42]', r
+diff --git a/test/ractor_test.rb b/test/ractor_test.rb
+index 08636e1..79506c0 100644
+--- a/test/ractor_test.rb
++++ b/test/ractor_test.rb
+@@ -1,6 +1,6 @@
+ if RUBY_VERSION < '3'
+-  require './lib/backports/3.0.0/ractor.rb'
+-  require './lib/backports/2.3.0/string/uminus.rb'
++  require 'backports/3.0.0/ractor.rb'
++  require 'backports/2.3.0/string/uminus.rb'
+ 
+   PATH = './test/test_ractor.rb'
+   require './test/mri_runner_patched.rb'
